@@ -6,6 +6,8 @@ import time
 from scipy.spatial.distance import cdist
 from concurrent.futures import ThreadPoolExecutor
 
+#To be structured in a modular fashion
+
 # Parámetros
 GRID_SIZE = 40
 OCCUPANCY = 0.65
