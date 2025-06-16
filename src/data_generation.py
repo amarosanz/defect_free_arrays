@@ -1,19 +1,26 @@
 import numpy as np
 
+# This module provides a data generator for creating random square grids of atoms. It may be desirable 
+# to extend it to more complex atomic arrangements in the future.
+
 class DataGenerator:
     def __init__(self, 
                  grid_size : int = 40, #size of the square grid
+                 target_type : str = "square", #type of target area, currently only "square" is supported
                  target_size : int = 25, #size of the target square grid
                  occupancy = 0.65 #Ratio of occupied sites
                  
                 ):
         #instance variables
         self.grid_size = grid_size
+        self.target_type = target_type
         self.target_size = target_size
         self.occupancy = occupancy 
         self.total_sites = grid_size * grid_size
         self.atom_count = int(self.total_sites * occupancy)
-        self.target_sites = target_size * target_size
+        if target_type == "square":
+            self.target_sites = target_size * target_size
+            self.target_center = np.array([grid_size // 2, grid_size // 2]) #center of the target area
 
         #some constraints
         if not (0 < target_size <= grid_size):
