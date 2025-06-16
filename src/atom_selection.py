@@ -1,21 +1,30 @@
 import numpy as np
 
+# This module provides a class for selecting the atoms to be moved in the assignment procedure.
+
 class AtomSelector:
-    def __init__(self, atom_positions):
+    def __init__(self, 
+                 atom_positions : np.ndarray,  # Array of atom positions
+                 target_positions: np.ndarray  # Array of target positions 
+                 ):
+        # instance variables
         self.atom_positions = atom_positions
+        self.target_positions = target_positions
 
-    def select_nearest_atoms(self, position, num_neighbors=5):
+    # select closest atoms 
+    def select_closest_atoms(self, center: np.ndarray, n_targets: int):
         """
-        Selecciona los átomos más cercanos a una posición dada.
-        
-        Parameters:
-            position: Posición del átomo de referencia.
-            num_neighbors: Número de átomos más cercanos a seleccionar.
-        
+        Select the closest atoms to a given center point.
+
+        Args:
+            center (np.ndarray): The center point from which to measure distances.
+            n_targets (int): The number of closest atoms to select.
+
         Returns:
-            nearest_atoms: Índices de los átomos más cercanos.
+            np.ndarray: The selected closest atoms.
+            np.ndarray: Indices of the selected atoms in the original atom positions.
         """
-        distances = np.linalg.norm(self.atom_positions - position, axis=1)
-        nearest_atoms = np.argsort(distances)[:num_neighbors]
-        return nearest_atoms
-
+        distances = np.linalg.norm(self.atom_positions - center, axis=1)
+        sorted_indices = np.argpartition(distances, min(n_targets-1, len(distances)-1))[:n_targets]
+        return self.atom_positions[sorted_indices], sorted_indices
+    # find discarded atoms 
