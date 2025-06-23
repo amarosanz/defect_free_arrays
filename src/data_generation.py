@@ -62,6 +62,29 @@ class DataGenerator:
             positions: Array of target positions.
         """
         offset = (self.grid_size - self.target_size) // 2
-        i_coords, j_coords = np.mgrid[0:self.atom_count, 0:self.atom_count]
+        i_coords, j_coords = np.mgrid[0:self.target_size, 0:self.target_size]
         positions = np.column_stack([(i_coords + offset).ravel(), (j_coords + offset).ravel()])
         return positions
+
+
+    def get_target_positions_from_matrix(self, binary_matrix):
+        """
+        Get positions of target (bright) pixels from the corresponding binary matrix.
+        Assumes (0,0) is the bottom-left corner of the image.
+
+        Args:
+        binary_matrix: 2D numpy array with 0s and 1s
+
+        Returns:
+        positions: Array of (i, j) positions where value == 1, with origin at bottom-left
+        """
+        # Get positions where matrix value is 1
+        positions = np.argwhere(binary_matrix == 1)
+        
+        # Convert to Cartesian-style coordinates (origin at bottom-left)
+        h = binary_matrix.shape[0]
+        cartesian_positions = np.column_stack((h - 1 - positions[:, 0], positions[:, 1]))
+        
+        return cartesian_positions
+    
+    

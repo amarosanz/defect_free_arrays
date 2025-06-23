@@ -5,10 +5,10 @@ from lap import lapjv
 import time
 
 # Parámetros
-GRID_SIZE = 40
+GRID_SIZE = 4
 OCCUPANCY = 0.65
-TARGET_SIZE = 25
-ALPHA = 2
+TARGET_SIZE = 2
+ALPHA = 1
 STEPS = 20  # Número de interpolaciones
 
 def generate_random_array(grid_size, occupancy):
@@ -50,6 +50,8 @@ def compute_cost_matrix_vectorized(atoms, targets, alpha=1.0):
     
     # Aplicar potencia alpha
     cost_matrix = distances ** alpha
+    print(f"Cost matrix shape: {cost_matrix.shape}")
+    print(f"Cost matrix: {cost_matrix}")
     
     return cost_matrix
 
@@ -64,8 +66,10 @@ def find_discarded_atoms_vectorized(all_atoms, selected_atoms):
     # all_atoms: (N_all, 2) -> (N_all, 1, 2)
     # selected_atoms: (N_sel, 2) -> (1, N_sel, 2)
     all_expanded = all_atoms[:, np.newaxis, :]
+    # print(f"all expanded array: {all_expanded}")
+
     selected_expanded = selected_atoms[np.newaxis, :, :]
-    
+    # print(f"selected expanded array: {selected_expanded}")
     # Verificar igualdad elemento por elemento y luego por filas completas
     equal_elements = (all_expanded == selected_expanded)  # (N_all, N_sel, 2)
     equal_rows = np.all(equal_elements, axis=2)           # (N_all, N_sel)
@@ -80,6 +84,7 @@ def select_closest_atoms_vectorized(atoms, center, n_targets):
     """
     # Calcular todas las distancias de una vez
     distances = np.linalg.norm(atoms - center, axis=1)
+    print(f"Center: {center}")
     # Obtener índices ordenados y seleccionar los primeros n_targets
     sorted_indices = np.argpartition(distances, min(n_targets-1, len(distances)-1))[:n_targets]
     return atoms[sorted_indices], sorted_indices
@@ -198,7 +203,9 @@ def main():
     print("Generando array inicial...")
     array = generate_random_array(GRID_SIZE, OCCUPANCY)
     atoms = get_atom_positions(array)
+    print(f"Posiciones de los átomos: {atoms}")
     targets = get_target_positions(GRID_SIZE, TARGET_SIZE)
+    print(f"Posiciones de los objetivos: {targets}")
     
     print(f"Átomos encontrados: {len(atoms)}")
     print(f"Posiciones objetivo: {len(targets)}")
@@ -219,7 +226,10 @@ def main():
 
     print("Resolviendo asignación húngara...")
     start_time = time.perf_counter()
-    _, col_ind, _ = lapjv(cost_matrix)
+    row_ind, col_ind, total_cost = lapjv(cost_matrix)
+    print(f"Row indices: {row_ind}")
+    print(f"Column indices: {col_ind}")
+    print(f"Total cost: {total_cost}")      
     end_time = time.perf_counter()
     assign_time = end_time - start_time
 

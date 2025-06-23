@@ -21,15 +21,19 @@ def generate_random_array(grid_size, occupancy):
     indices = np.random.choice(total_sites, atom_count, replace=False)
     array = np.zeros(total_sites, dtype=bool)
     array[indices] = True
+    print(f"Array shape: {array.shape}")
+    print(f"Reshaped array: {array.reshape((grid_size, grid_size))}")
     return array.reshape((grid_size, grid_size))
 
 def get_atom_positions(array):
+    print(f"Type of returned array 1: {type(np.argwhere(array == 1))}")
     return np.argwhere(array == 1)
 
 def get_target_positions(grid_size, target_size):
     offset = (grid_size - target_size) // 2
     i_coords, j_coords = np.mgrid[0:target_size, 0:target_size]
     positions = np.column_stack([(i_coords + offset).ravel(), (j_coords + offset).ravel()])
+    print(f"Type of returned array 2: {type(positions)}")
     return positions
 
 def compute_cost_matrix_scipy(atoms, targets, alpha=1.0):
