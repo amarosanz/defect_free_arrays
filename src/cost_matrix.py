@@ -57,8 +57,8 @@ class Solver:
             tuple: A tuple containing the indices of the optimal assignment and the total cost.
         """
         total_cost, col_ind, row_ind = lapjv(self.cost_matrix)
-        print(f"Row indices: {row_ind}")
-        print(f"Column indices: {col_ind}")
-        print(f"Total cost: {total_cost}")          
+        # print(f"Row indices: {row_ind}")
+        # print(f"Column indices: {col_ind}")
+        # print(f"Total cost: {total_cost}")          
         return total_cost, col_ind, row_ind
 
